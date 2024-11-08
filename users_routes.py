@@ -18,6 +18,7 @@ class UserOut(BaseModel):
 class UserCreate(BaseModel):
     email: str
     password: str
+    username: str
     user_type: str
 
 @router.post("/users/", response_model=UserOut)

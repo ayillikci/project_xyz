@@ -19,6 +19,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 class UserCreate(BaseModel):
     email: str
     password: str
+    username: str  # Add this line
+    user_type: str
 
 class Token(BaseModel):
     access_token: str
@@ -45,17 +47,16 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
 @router.post("/signup", response_model=Token)
 async def signup(user: UserCreate, db: Session = Depends(get_db)):
     hashed_password = hash_password(user.password)
-    new_user = User(email=user.email, password_hash=hashed_password, user_type="user", registered_at=datetime.utcnow())
-    try:
-        db.add(new_user)
-        db.commit()
-        db.refresh(new_user)
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email is already registered."
-        )
+    new_user = User(
+        email=user.email,
+        username=user.username,  # Ensure this line is included
+        password_hash=hashed_password,
+        user_type=user.user_type,
+        registered_at=datetime.utcnow()
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
     access_token = create_access_token(data={"sub": new_user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
