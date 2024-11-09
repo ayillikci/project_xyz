@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from models import Offer, User
+from models import Offer, User, Category
 from database import get_db
 from auth_routes import get_current_user
 from pydantic import BaseModel
@@ -14,10 +14,21 @@ class OfferBase(BaseModel):
     product_description: str
     product_price: float
     location: str  # use `str` to represent points or location strings
+    category_id: int
+
+class CategoryOut(BaseModel):
+    id: int
+    name: str
+    description: str
+
+    class Config:
+        orm_mode = True
 
 class OfferOut(OfferBase):
     id: int
-    # user_id: int
+    user_id: int
+
+
 @router.post("/offers/", response_model=OfferOut)
 async def create_offer(
     offer: OfferBase,
@@ -27,12 +38,28 @@ async def create_offer(
     print(f"Current user: {current_user}")
     print(f"Current user ID: {current_user.id}")
 
+    # Check if the category exists
+    category = db.query(Category).filter(Category.id == offer.category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+
+    new_offer = Offer(
+        product_name=offer.product_name,
+        product_description=offer.product_description,
+        product_price=offer.product_price,
+        location=offer.location,
+        user_id=current_user.id,  # Associate offer with the current user
+        category_id=offer.category_id  # Associate offer with the specified category
+    )
+
+    """
     new_offer = Offer(
         **offer.dict(),
         user_id=current_user.id,
+        category_id=offer.category_id,
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow()
-    )
+    )"""
     db.add(new_offer)
     db.commit()
     db.refresh(new_offer)

@@ -27,9 +27,13 @@ class Offer(Base):
     product_price = Column(DECIMAL, nullable=False)
     location = Column(String)  # Example for a simple point string; you may change it
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    category_id = Column(Integer, ForeignKey('categories.id'), nullable=True)
-    created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False)
-    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=True)
+
+    category_id = Column(Integer, ForeignKey('categories.id'), nullable=False)
+    #created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False)
+    #updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=True)
+    # Automatically set timestamps for created_at and updated_at
+    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
+    updated_at = Column(TIMESTAMP, nullable=True, onupdate=datetime.utcnow)
 
     user = relationship("User", back_populates="offers")
     category = relationship("Category", back_populates="offers")
