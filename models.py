@@ -26,7 +26,7 @@ class Offer(Base):
     product_description = Column(Text, nullable=True)
     product_price = Column(DECIMAL, nullable=False)
     location = Column(String)  # Example for a simple point string; you may change it
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     category_id = Column(Integer, ForeignKey('categories.id'), nullable=True)
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False)
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=True)
@@ -47,12 +47,12 @@ class Review(Base):
     __tablename__ = 'reviews'
 
     id = Column(Integer, primary_key=True, index=True)
-    offer_id = Column(Integer, ForeignKey('offers.id'))
-    user_id = Column(Integer, ForeignKey('users.id'))
+    offer_id = Column(Integer, ForeignKey('offers.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     rating = Column(Integer, nullable=False)
     comment = Column(Text, nullable=True)
-    created_at = Column(TIMESTAMP, nullable=False)
-    updated_at = Column(TIMESTAMP, nullable=True)
+    created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False)
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=False)
     status = Column(String, nullable=False)
 
     user = relationship("User", back_populates="reviews")

@@ -24,6 +24,9 @@ async def create_offer(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    print(f"Current user: {current_user}")
+    print(f"Current user ID: {current_user.id}")
+
     new_offer = Offer(
         **offer.dict(),
         user_id=current_user.id,
@@ -43,14 +46,14 @@ async def create_offer(offer: OfferBase, db: Session = Depends(get_db), current_
     db.commit()
     db.refresh(new_offer)
     return new_offer
-
+"""
 @router.get("/offers/{offer_id}", response_model=OfferOut)
 async def get_offer(offer_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     offer = db.query(Offer).filter(Offer.id == offer_id).first()
     if not offer:
         raise HTTPException(status_code=404, detail="Offer not found")
     return offer
-"""
+
 @router.put("/offers/{offer_id}", response_model=OfferOut)
 async def update_offer(offer_id: int, offer_update: OfferBase, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     offer = db.query(Offer).filter(Offer.id == offer_id).first()

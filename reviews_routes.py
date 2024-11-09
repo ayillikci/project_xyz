@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from models import Review, User, Offer
 from database import get_db
 from auth_routes import get_current_user
+from datetime import datetime
 
 router = APIRouter()
 
@@ -31,12 +32,15 @@ async def create_review(
     if not offer:
         raise HTTPException(status_code=404, detail="Offer not found")
 
+    # Create a new review with timestamps
     new_review = Review(
         offer_id=review.offer_id,
         user_id=current_user.id,
         rating=review.rating,
         comment=review.comment,
-        status=review.status
+        status=review.status,
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
     )
     db.add(new_review)
     db.commit()
