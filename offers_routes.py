@@ -5,6 +5,7 @@ from database import get_db
 from auth_routes import get_current_user
 from pydantic import BaseModel
 from typing import List
+from datetime import datetime
 
 router = APIRouter()
 
@@ -16,8 +17,26 @@ class OfferBase(BaseModel):
 
 class OfferOut(OfferBase):
     id: int
-
+    # user_id: int
 @router.post("/offers/", response_model=OfferOut)
+async def create_offer(
+    offer: OfferBase,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    new_offer = Offer(
+        **offer.dict(),
+        user_id=current_user.id,
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    db.add(new_offer)
+    db.commit()
+    db.refresh(new_offer)
+    return new_offer
+
+# Commented while fixing the created_at (and updated_at, if necessary).
+"""@router.post("/offers/", response_model=OfferOut)
 async def create_offer(offer: OfferBase, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     new_offer = Offer(**offer.dict(), user_id=current_user.id)
     db.add(new_offer)
@@ -31,7 +50,7 @@ async def get_offer(offer_id: int, db: Session = Depends(get_db), current_user: 
     if not offer:
         raise HTTPException(status_code=404, detail="Offer not found")
     return offer
-
+"""
 @router.put("/offers/{offer_id}", response_model=OfferOut)
 async def update_offer(offer_id: int, offer_update: OfferBase, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     offer = db.query(Offer).filter(Offer.id == offer_id).first()

@@ -1,6 +1,9 @@
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, DECIMAL, TIMESTAMP
 from sqlalchemy.orm import relationship
 from database import Base
+from datetime import datetime
+from sqlalchemy.sql import func
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -22,16 +25,15 @@ class Offer(Base):
     product_name = Column(String, nullable=False)
     product_description = Column(Text, nullable=True)
     product_price = Column(DECIMAL, nullable=False)
-    location = Column(String)  # PostGIS Point type if available
+    location = Column(String)  # Example for a simple point string; you may change it
     user_id = Column(Integer, ForeignKey('users.id'))
-    category_id = Column(Integer, ForeignKey('categories.id'))
-    created_at = Column(TIMESTAMP, nullable=False)
-    updated_at = Column(TIMESTAMP, nullable=True)
+    category_id = Column(Integer, ForeignKey('categories.id'), nullable=True)
+    created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False)
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=True)
 
     user = relationship("User", back_populates="offers")
     category = relationship("Category", back_populates="offers")
     reviews = relationship("Review", back_populates="offer")
-
 class Category(Base):
     __tablename__ = 'categories'
 
