@@ -3,6 +3,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import auth_routes
 import users_routes
 import offers_routes
@@ -32,3 +33,12 @@ def get_db():
     finally:
         db.close()
 
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # React's default port
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
