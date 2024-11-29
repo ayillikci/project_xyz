@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:8000";
+//const BASE_URL = "http://localhost:8000";
+const BASE_URL = "http://localhost/api"
 
 export const loginUser = async (email, password) => {
   const response = await fetch(`${BASE_URL}/auth/login`, {
@@ -14,6 +15,18 @@ export const loginUser = async (email, password) => {
   return response.json(); // Typically returns a token or user data
 };
 
+export const getUserOffers = async (userId, token) => {
+    const response = await fetch(`${BASE_URL}/users/${userId}/offers`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch user offers");
+    }
+    return response.json();
+  };  
 
 export const signupUser = async (email, username, password, userType) => {
     const response = await fetch(`${BASE_URL}/auth/signup`, {
@@ -28,4 +41,3 @@ export const signupUser = async (email, username, password, userType) => {
     }
     return response.json();
   };
-  

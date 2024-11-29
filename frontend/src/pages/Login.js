@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api";
 
 const Login = () => {
@@ -6,17 +7,25 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const navigate = useNavigate(); // Hook for navigation
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     try {
+      // Call loginUser API
       const data = await loginUser(email, password);
-      console.log("Logged in successfully:", data);
+
+      // Save user information in localStorage
+      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("token", data.token);
+
+      // Notify success and navigate to the profile page
       alert("Login successful!");
-      // Store the token or navigate to another page as needed
+      navigate("/profile");
     } catch (err) {
       console.error(err.message);
-      setError("Invalid email or password. Please try again.");
+      setError("Login failed. Please check your credentials.");
     }
   };
 
