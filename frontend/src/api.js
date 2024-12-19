@@ -1,5 +1,5 @@
 //const BASE_URL = "http://localhost:8000";
-const BASE_URL = process.env.API_URL //"http://localhost/api"
+const BASE_URL = process.env.API_URL || "http://localhost/api"
 
 export const loginUser = async (email, password) => {
   const response = await fetch(`${BASE_URL}/auth/login`, {
