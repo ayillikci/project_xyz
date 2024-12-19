@@ -3,6 +3,9 @@
 //const BASE_URL = "https://project-xyz.onrender.com"
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+console.log('BASE_URL:', process.env.REACT_APP_BASE_URL);
+
+
 export const loginUser = async (email, password) => {
   const response = await fetch(`${BASE_URL}/auth/login`, {
     method: "POST",
