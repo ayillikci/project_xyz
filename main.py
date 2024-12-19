@@ -12,6 +12,22 @@ import reviews_routes
 
 app = FastAPI()
 
+# Allow specific origins (your frontend URL)
+origins = [
+    "https://project-xyz-front-end.onrender.com",
+    "http://localhost:3000"  # Add this for local development
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Include your routes
+
 # Include auth routes with a specific prefix, like "/auth" (optional)
 app.include_router(auth_routes.router, prefix="/auth")
 
