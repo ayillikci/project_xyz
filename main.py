@@ -50,7 +50,7 @@ def get_db():
         db.close()
 
 
-
+"""
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],  # React's default port
@@ -58,3 +58,4 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+"""
