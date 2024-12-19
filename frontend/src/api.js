@@ -1,6 +1,6 @@
 //const BASE_URL = "http://localhost:8000";
-//const BASE_URL = process.env.API_URL || "http://localhost/api"
-const BASE_URL = "https://project-xyz.onrender.com"
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost/api"
+//const BASE_URL = "https://project-xyz.onrender.com"
 
 
 export const loginUser = async (email, password) => {
